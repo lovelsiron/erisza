@@ -9,7 +9,7 @@ function App() {
   const [showGift, setShowGift] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(0.55); // Default to 55% volume level
+  const [volume, setVolume] = useState(0.4); // Default to 40% volume level
   
   // Typing Effect state (Part 1 and Part 2)
   const [typedText, setTypedText] = useState({ part1: '', part2: '' });
