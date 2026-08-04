@@ -23,18 +23,42 @@ function App() {
     audio.volume = volume;
     audioRef.current = audio;
 
-    // Autoplay song immediately upon load (catch browser autoplay block policies)
+    const startPlayOnInteraction = () => {
+      if (audioRef.current) {
+        audioRef.current.play()
+          .then(() => {
+            setIsPlaying(true);
+            cleanupListeners();
+          })
+          .catch((err) => {
+            console.error("Audio playback failed on interaction", err);
+          });
+      }
+    };
+
+    const cleanupListeners = () => {
+      window.removeEventListener('click', startPlayOnInteraction);
+      window.removeEventListener('pointerdown', startPlayOnInteraction);
+      window.removeEventListener('keydown', startPlayOnInteraction);
+    };
+
+    // Autoplay song immediately upon load
     audio.play()
       .then(() => {
         setIsPlaying(true);
       })
       .catch((err) => {
-        console.warn("Autoplay blocked by browser. Music will start on user interaction.", err);
+        console.warn("Autoplay blocked by browser. Listening for first user interaction to start music.", err);
+        // If autoplay is blocked, trigger on first touch, click, or button press anywhere
+        window.addEventListener('click', startPlayOnInteraction);
+        window.addEventListener('pointerdown', startPlayOnInteraction);
+        window.addEventListener('keydown', startPlayOnInteraction);
       });
 
-    // Cleanup: pause audio on component unmount
+    // Cleanup: pause audio and remove listeners on component unmount
     return () => {
       audio.pause();
+      cleanupListeners();
     };
   }, []);
 
